@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Hospital General de México - Procesar CIE</title>
+  <style>
+    body {
+        background-color: #e0f7fa;
+        font-family: Arial, sans-serif;
+        color: #006064;
+        text-align: center;
+        padding: 20px;
+    }
+    .logos-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+        padding: 0 40px;
+    }
+    .logo-img {
+        height: 80px;
+        object-fit: contain;
+    }
+    h1 {
+        color: #004d40;
+        margin-bottom: 5px;
+        font-size: 26px;
+    }
+    h2 {
+        color: #00796b;
+        font-weight: normal;
+        margin-bottom: 25px;
+    }
+    .contenedor {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+    form, .resumen {
+        background-color: #ffffff;
+        padding: 30px 40px;
+        border-radius: 12px;
+        box-shadow: 0px 6px 16px rgba(0,0,0,0.15);
+        margin-top: 20px;
+        width: 100%;
+        max-width: 480px;
+        text-align: center;
+    }
+    input[type=file], button, a.boton {
+        margin: 15px 0;
+        padding: 12px;
+        width: 70%;
+        font-size: 16px;
+        border: none;
+        border-radius: 8px;
+        display: inline-block;
+        text-decoration: none;
+        color: white;
+        background-color: #00acc1;
+        font-weight: bold;
+    }
+    button:hover, a.boton:hover {
+        background-color: #00838f;
+    }
+    .success {
+        border-left: 8px solid #d86bad;
+        background-color: #e0f2f1;
+    }
+    .warning {
+        border-left: 8px solid #fbc02d;
+        background-color: #fff9c4;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="logos-container">
+    <img src="{{ url_for('static', filename='logo_hgm.png') }}" alt="Logo HGM" class="logo-img">
+    <img src="{{ url_for('static', filename='logo_anestesia.png') }}" alt="Logo Anestesia" class="logo-img">
+  </div>
+
+  <h1>Hospital General de México</h1>
+  <h2>Procesador de Códigos CIE9 y CIE10</h2>
+
+  <div class="contenedor">
+  {% if resumen %}
+    <div class="resumen {{ 'success' if resumen.cie9_porcentaje >= 70 and resumen.cie10_porcentaje >= 70 else 'warning' }}">
+      <h3>✔ Resumen del procesamiento:</h3>
+      <p><strong>Total de registros:</strong> {{ resumen.total }}</p>
+
+      <p><u><strong>Procedimientos (CIE9)</strong></u><br>
+      ✔ Codificados: {{ resumen.cie9_codificados }} ({{ resumen.cie9_porcentaje }}%)<br>
+      ⚠ Pendientes: {{ resumen.cie9_pendientes }}</p>
+
+      <p><u><strong>Diagnósticos (CIE10)</strong></u><br>
+      ✔ Codificados: {{ resumen.cie10_codificados }} ({{ resumen.cie10_porcentaje }}%)<br>
+      ⚠ Pendientes: {{ resumen.cie10_pendientes }}</p>
+    </div>
+
+    <a href="{{ url_for('descargar_archivo') }}" class="boton">Descargar archivo procesado</a>
+    <a href="{{ url_for('upload_file') }}" class="boton">Subir otro archivo</a>
+
+  {% else %}
+    <form action="/" method="post" enctype="multipart/form-data">
+      <input type="file" name="archivo" required>
+      <br>
+      <button type="submit">Subir y Procesar</button>
+    </form>
+  {% endif %}
+  </div>
+
+</body>
+</html>
+
